@@ -7,7 +7,6 @@ import sys
 #host_name=sys.argv[1]
 
 
-
 admin_user = Connection(host='35.193.50.184',user='revanth')
 
 application_user_name= Connection(host='35.193.50.184',user='appsuser')

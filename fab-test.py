@@ -97,7 +97,6 @@ env_vars={"SECRET_KEY": os.environ.get('SECRET_KEY')}
 '''
 
 
-
 def update_packages():
     admin_user.run('sudo apt -y update', pty=True, watchers=[sudo_pass])
     
@@ -107,6 +106,7 @@ def check_application_group():
     group_check= admin_user.run('getent group | cut -d: -f1')    
     if application_group in group_check.stdout.strip():       
         admin_user.run('echo "group {} exists"'.format(application_group))
+    B
     else:
         admin_user.run('sudo groupadd --system {}'.format(application_group), pty=True, watchers=[sudo_pass])
 
