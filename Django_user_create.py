@@ -7,21 +7,21 @@ import sys
 #host_name=sys.argv[1]
 
 
-admin_user = Connection(host='35.193.50.184',user='revanth')
+admin_user = Connection(host='<private-ip/hostname of remote machine',user='revanth') #admin user
 
-application_user_name= Connection(host='35.193.50.184',user='appsuser')
-
-
-sudo_pass= Responder(pattern=r'\[sudo\] password for revanth:', response='revanth123\n')
-
-application_user_pass= Responder(pattern=r'Password', response='itversity\n')
+application_user_name= Connection(host='<private-ip/hostname of remote machine',user='<application-user-name>') #application user name
 
 
+sudo_pass= Responder(pattern=r'\[sudo\] password for revanth:', response='<admin-user-pass>\n') #admin user password
+
+application_user_pass= Responder(pattern=r'Password', response='<application-user-pass>\n') #application user password
 
 
-application_group= 'itversity'
 
-application_user= 'appsuser'
+
+application_group= '<application-user-group>'
+
+application_user= '<application-user-name>'
 
 
 
@@ -49,7 +49,7 @@ def check_application_user():
     else:
         admin_user.run('sudo useradd --system --gid {0} -s /bin/bash -m -d /home/{1} {1}'.format(application_group,application_user),pty=True, watchers=[sudo_pass])
         admin_user.run('echo "created user {0} and assigned group {1}"'.format(application_user,application_group))
-        admin_user.run('echo -e "itversity\nitversity" |sudo passwd {}'.format(application_user),pty=True, watchers=[sudo_pass])
+        admin_user.run('echo -e "<application-user-pass>\n<application-user-pass>" |sudo passwd {}'.format(application_user),pty=True, watchers=[sudo_pass])
 
 
 def check_application_user_homedir():

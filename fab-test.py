@@ -8,21 +8,21 @@ import sys
 
 
 
-admin_user = Connection(host='35.193.50.184',user='revanth')
+admin_user = Connection(host='<private-ip/hostname of remote machine',user='revanth') #admin user
 
-application_user_name= Connection(host='35.193.50.184',user='itvadmin')
-
-
-sudo_pass= Responder(pattern=r'\[sudo\] password for revanth:', response='revanth123\n')
-
-application_user_pass= Responder(pattern=r'Password', response='itversity\n')
+application_user_name= Connection(host='<private-ip/hostname of remote machine',user='<application-user-name>') #application user name
 
 
+sudo_pass= Responder(pattern=r'\[sudo\] password for revanth:', response='<admin-user-pass>\n') #admin user password
+
+application_user_pass= Responder(pattern=r'Password', response='<application-user-pass>\n') #application user password
 
 
-application_group= 'itversity'
 
-application_user= 'itvadmin'
+
+application_group= '<application-user-group>'
+
+application_user= '<application-user-name>'
 
 
 
@@ -34,12 +34,12 @@ postgresql_pass="'postgres'"
 repo_name='Labs Official'
 
 gunicorn_conf_file= '''[program:gunicorn]
-directory=/home/itvadmin/app
-command=/home/itvadmin/venv/bin/gunicorn --workers 3 --bind unix:/home/itvadmin/app/app.sock app.wsgi:application
+directory=/home/<application-user-name>/app
+command=/home/<application-user-name>/venv/bin/gunicorn --workers 3 --bind unix:/home/<application-user-name>/app/app.sock app.wsgi:application
 autostart=true
 autorestart=true
-stderr_logfile=/home/itvadmin/app/app/log/gunicorn/gunicorn.err.log
-stdout_logfile=/home/itvadmin/app/app/log/gunicorn/gunicorn.out.log
+stderr_logfile=/home/<application-user-name>/app/app/log/gunicorn/gunicorn.err.log
+stdout_logfile=/home/<application-user-name>/app/app/log/gunicorn/gunicorn.out.log
 environment =
         DJANGO_SETTINGS_MODULE=app.settings.development
 
@@ -56,12 +56,12 @@ nginx_conf_file= '''server {
 
     location / {
     include proxy_params;
-    proxy_pass http://unix:/home/itvadmin/app/app.sock;
+    proxy_pass http://unix:/home/<application-user-name>/app/app.sock;
     }
 
     location /static/{
     autoindex on;
-    alias  /home/itvadmin/app/static/ ;
+    alias  /home/<application-user-name>/app/static/ ;
     }}
 '''
 
@@ -78,7 +78,7 @@ gunicornconf_path = '/etc/supervisor/conf.d/gunicorn.conf'
 
 nginx_conf_path= '/etc/nginx/sites-available/django.conf'
 
-git_repo_link= 'git@bitbucket.org:itversity-team/labs-official.git'
+git_repo_link= '<git repo link>'
 
 
 
@@ -120,7 +120,7 @@ def check_application_user():
     else:
         admin_user.run('sudo useradd --system --gid {0} -s /bin/bash -m -d /home/{1} {1}'.format(application_group,application_user),pty=True, watchers=[sudo_pass])
         admin_user.run('echo "created user {0} and assigned group {1}"'.format(application_user,application_group))
-        admin_user.run('echo -e "itversity\nitversity" |sudo passwd {}'.format(application_user),pty=True, watchers=[sudo_pass])
+        admin_user.run('echo -e "<application-user-pass>\n<application-user-pass>" |sudo passwd {}'.format(application_user),pty=True, watchers=[sudo_pass])
 
 
 def check_application_user_homedir():

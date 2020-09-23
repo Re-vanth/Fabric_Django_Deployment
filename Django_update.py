@@ -7,21 +7,21 @@ import sys
 #host_name=sys.argv[1]
 
 
-admin_user = Connection(host='34.68.121.83',user='revanth')
+admin_user = Connection(host='<private-ip/hostname of remote machine',user='revanth') #admin user
 
-application_user_name= Connection(host='34.68.121.83',user='itvadmin')
-
-
-sudo_pass= Responder(pattern=r'\[sudo\] password for revanth:', response='revanth123\n')
-
-application_user_pass= Responder(pattern=r'Password', response='itversity\n')
+application_user_name= Connection(host='<private-ip/hostname of remote machine',user='<application-user-name>') #application user name
 
 
+sudo_pass= Responder(pattern=r'\[sudo\] password for revanth:', response='<admin-user-pass>\n') #admin user password
+
+application_user_pass= Responder(pattern=r'Password', response='<application-user-pass>\n') #application user password
 
 
-application_group= 'itversity'
 
-application_user= 'itvadmin'
+
+application_group= '<application-user-group>'
+
+application_user= '<application-user-name>'
 
 repo_name='workflow-test'
 
@@ -42,7 +42,7 @@ def git_pull():
 
 def git_init():
     application_user_name.run('git init')
-    application_user_name.run('git remote add origin \'git@github.com:revanth-itv/workflow-test.git\'')
+    application_user_name.run('git remote add origin \"<git repo link>"')
     application_user_name.run('git pull origin master')
 
 

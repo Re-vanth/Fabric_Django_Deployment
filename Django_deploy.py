@@ -7,21 +7,21 @@ import sys
 #host_name=sys.argv[1]
 
 
-admin_user = Connection(host='34.68.121.83',user='revanth')
+admin_user = Connection(host='<private-ip/hostname of remote machine>',user='revanth') #admin user 
 
-application_user_name= Connection(host='34.68.121.83',user='itvadmin')
-
-
-sudo_pass= Responder(pattern=r'\[sudo\] password for revanth:', response='revanth123\n')
-
-application_user_pass= Responder(pattern=r'Password', response='itversity\n')
+application_user_name= Connection(host='<private-ip/hostname of remote machine',user='<application-user-name>') #application user name
 
 
+sudo_pass= Responder(pattern=r'\[sudo\] password for revanth:', response='<admin-user-pass>\n') #admin user password
+
+application_user_pass= Responder(pattern=r'Password', response='<application-user-pass>\n') #application user password
 
 
-application_group= 'itversity'
 
-application_user= 'itvadmin'
+
+application_group= '<application-user-group>'
+
+application_user= '<application-user-name>'
 
 
 packages_list=['nginx','supervisor','postgresql',f'postgresql-contrib','lolcat','git',f'python3-venv']
@@ -33,12 +33,12 @@ repo_name='workflow-test'
 
 
 gunicorn_conf_file= '''[program:gunicorn]
-directory=/home/itvadmin/sampleproject
-command=/home/itvadmin/venv/bin/gunicorn --workers 3 --bind unix:/home/itvadmin/sampleproject/app.sock sampleproject.wsgi:application
+directory=/home/<application-user-name>/sampleproject
+command=/home/<application-user-name>/venv/bin/gunicorn --workers 3 --bind unix:/home/<application-user-name>/sampleproject/app.sock sampleproject.wsgi:application
 autostart=true
 autorestart=true
-stderr_logfile=/home/itvadmin/sampleproject/sampleproject/log/gunicorn/gunicorn.err.log
-stdout_logfile=/home/itvadmin/sampleproject/sampleproject/log/gunicorn/gunicorn.out.log
+stderr_logfile=/home/<application-user-name>/sampleproject/sampleproject/log/gunicorn/gunicorn.err.log
+stdout_logfile=/home/<application-user-name>/sampleproject/sampleproject/log/gunicorn/gunicorn.out.log
 environment =
         DJANGO_SETTINGS_MODULE=sampleproject.settings
 
@@ -54,12 +54,12 @@ nginx_conf_file= '''server {
 
     location / {
     include proxy_params;
-    proxy_pass http://unix:/itvadmin/sampleproject/app.sock;
+    proxy_pass http://unix:/<application-user-name>/sampleproject/app.sock;
     }
 
     location /static/{
     autoindex on;
-    alias  /itvadmin/sampleproject/static/ ;
+    alias  /<application-user-name>/sampleproject/static/ ;
     }}
 '''
 
@@ -101,7 +101,7 @@ def git_pull():
 
 def git_init():
     application_user_name.run('git init')
-    application_user_name.run('git remote add origin \'git@github.com:revanth-itv/workflow-test.git\'')
+    application_user_name.run('git remote add origin \"<git repo link>"')
     application_user_name.run('git pull origin master')
 
 
